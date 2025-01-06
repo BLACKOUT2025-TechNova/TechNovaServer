@@ -17,6 +17,17 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: 12341234
+          POSTGRES_DB: postgres
+
     permissions:
       contents: read
 
