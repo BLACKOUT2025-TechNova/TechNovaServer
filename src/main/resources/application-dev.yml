@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://aws-0-ap-northeast-2.pooler.supabase.com:5432/postgres
+    username: ${username}
+    password: ${password}
+    driver-class-name: org.postgresql.Driver
+#    hikari:
+#      connection-timeout: 30000
+#      maximum-pool-size: 10
+#      minimum-idle: 2
+#      connection-test-query: SELECT 1
+#
+#logging:
+#  level:
+#    org.hibernate: DEBUG
+#    com.zaxxer.hikari: DEBUG
+#    org.springframework: DEBUG
