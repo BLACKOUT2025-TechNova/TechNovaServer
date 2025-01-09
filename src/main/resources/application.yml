@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: techNovaApplication
+  profiles:
+    active: dev
+  jpa:
+    show-sql: true
+    database: postgresql
+    hibernate:
+      ddl-auto: update
