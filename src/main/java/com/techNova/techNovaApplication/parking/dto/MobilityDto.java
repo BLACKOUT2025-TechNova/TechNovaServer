@@ -18,24 +18,28 @@ import java.util.Map;
 @Getter
 public class MobilityDto {
     private long id;
+    private String gcooId;
     private MobilityType type;
     private Boolean needToBeHunted; // true 면 헌팅이 필요한 것! (= 잘못 놓여진 것)
     private String comment; // 한줄평
     private int score;
+    private int progress;
     private float latitude;
     private float longitude;
     private URI photoUri;
     private String photoKey;
     private Map<String, ScoreAndDetailDto> evaluation;
 
-    public static MobilityDto toDto(ParkedMobilities mobility) {
+    public static MobilityDto toDto(ParkedMobilities mobility, int progress) {
         return MobilityDto.builder()
                 .id(mobility.getId())
+                .gcooId(mobility.getGcooId())
                 .type(mobility.getType())
                 .needToBeHunted(mobility.getNeedToBeHunted())
                 .longitude(mobility.getLongitude())
                 .comment(mobility.getComment())
                 .score(mobility.getSum())
+                .progress(progress)
                 .latitude(mobility.getLatitude())
                 .photoUri(mobility.getPhotoUri())
                 .photoKey(mobility.getPhotoKey())
