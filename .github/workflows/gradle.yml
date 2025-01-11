@@ -67,7 +67,7 @@ jobs:
           docker pull doorbreaker/myapp:latest
           docker stop myapp || true
           docker rm myapp || true
-          docker run -d --name myapp -p 80:8080 \
+          docker run -d --name myapp -p 8080:8080 \
             -e SPRING_DATASOURCE_USERNAME=${username} \
             -e SPRING_DATASOURCE_PASSWORD=${password} \
             doorbreaker/myapp:latest
