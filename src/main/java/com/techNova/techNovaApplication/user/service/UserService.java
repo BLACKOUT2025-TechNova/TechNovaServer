@@ -1,6 +1,5 @@
 package com.techNova.techNovaApplication.user.service;
 
-import com.techNova.techNovaApplication.aws.service.S3Service;
 import com.techNova.techNovaApplication.parking.dto.GptEvaluateDto;
 import com.techNova.techNovaApplication.parking.dto.ScoreAndDetailDto;
 import com.techNova.techNovaApplication.parking.model.Evaluation;
@@ -32,7 +31,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ParkedMobilityRepository mobilityRepository;
-    private final S3Service s3Service;
 
     @Transactional
     public ResponseEntity<String> login(UserDto dto) {
@@ -82,10 +80,11 @@ public class UserService {
             map.put(gpt.getCategory(), new ScoreAndDetailDto(gpt.getScore(), gpt.getDetail()));
         }
         Evaluation evaluation = new Evaluation(map);
-        mobility.getParkingStatus().setEvaluation(evaluation); // evaluation을 good으로 변경
+        mobility.getParkingStatus().setEvaluation(evaluation); // evaluation을 변경
 
         mobility.setNeedToBeHunted(false); // 헌팅 대상에서 제외
-        mobility.setComment(dto.getComment()); // 코멘트 추가
+        mobility.setComment(dto.getComment()); // 코멘트 변경
+        mobility.setSum(calSum(evaluation)); // 총점 변경
         user.setReward(); // 리워드 지급
         try {
             mobility.setPhotoUri(new URI(dto.getParkingPhotoUri())); // 디비에 사진 정보 저장
@@ -93,6 +92,14 @@ public class UserService {
             throw new RuntimeException(e);
         }
         mobility.setPhotoKey(dto.getParkingPhotoKey());
+    }
+
+    private int calSum(Evaluation evaluation) {
+        int sum = 0;
+        for (ScoreAndDetailDto scoreAndDetailDto : evaluation.getEvaluations().values()) {
+            sum += scoreAndDetailDto.getScore();
+        }
+        return sum;
     }
 
     private boolean ifUserIsHunter(UserEntity user) {

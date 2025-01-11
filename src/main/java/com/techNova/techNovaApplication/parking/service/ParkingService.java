@@ -45,6 +45,7 @@ public class ParkingService {
         ParkedMobilities mobility = ParkedMobilities.builder()
                 .id(dto.getId())
                 .type(dto.getType())
+                .gcooId("GCOO-B"+dto.getId())
                 .needToBeHunted(clarifyNeedForHunting(sum))
                 .comment(dto.getComment())
                 .sum(sum)
@@ -59,6 +60,14 @@ public class ParkingService {
         mobilityRepository.save(mobility);
 
         return ResponseEntity.ok("{\"message\": \"주차 성공\"}");
+    }
+
+    private int calProgress(int sum) {
+        if (sum == 0) return 0;
+        else if (sum <= 25) return 25;
+        else if (sum <= 50) return 50;
+        else if (sum <= 75) return 75;
+        return 100;
     }
 
     private boolean clarifyNeedForHunting(int score) {
@@ -102,7 +111,7 @@ public class ParkingService {
                     .body(null);
         }
         ParkedMobilities mobility = byId.get();
-        MobilityDto dto = MobilityDto.toDto(mobility);
+        MobilityDto dto = MobilityDto.toDto(mobility, calProgress(mobility.getSum()));
         return ResponseEntity.ok(dto);
     }
 }
