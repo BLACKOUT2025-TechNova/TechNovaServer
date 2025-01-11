@@ -1,7 +1,10 @@
 package com.techNova.techNovaApplication.parking.dto;
 
+import com.techNova.techNovaApplication.parking.model.Evaluation;
 import com.techNova.techNovaApplication.parking.model.MobilityType;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 public class ParkingRequestDto {
@@ -13,5 +16,6 @@ public class ParkingRequestDto {
     private float longitude;
     private String parkingPhotoUri;
     private String parkingPhotoKey;
-    private String evaluation;
+    private String comment; // 한줄평
+    private List<GptEvaluateDto> evaluation;
 }

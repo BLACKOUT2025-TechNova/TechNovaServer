@@ -15,9 +15,11 @@ public class ParkingStatus {
     private Long mobilityId;
     private float latitude;
     private float longitude;
-    private String evaluation; // 구조가 string 에서 바뀔 수도
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "evaluation")
+    private Evaluation evaluation;
 
-    public ParkingStatus(Long mobilityId, float latitude, float longitude, String evaluation) {
+    public ParkingStatus(Long mobilityId, float latitude, float longitude, Evaluation evaluation) {
         this.mobilityId = mobilityId;
         this.latitude = latitude;
         this.longitude = longitude;

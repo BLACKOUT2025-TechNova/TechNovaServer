@@ -1,5 +1,6 @@
 package com.techNova.techNovaApplication.user.controller;
 
+import com.techNova.techNovaApplication.parking.dto.GptEvaluateDto;
 import com.techNova.techNovaApplication.user.dto.HunterDto;
 import com.techNova.techNovaApplication.user.dto.UserDto;
 import com.techNova.techNovaApplication.user.service.UserService;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,13 +33,8 @@ public class UserController {
      */
     @PostMapping(value = "/hunt", consumes = "multipart/form-data")
     public ResponseEntity<String> reward(
-            @RequestParam("phoneNumber") Long phoneNumber,
-            @RequestParam("mobilityId") Long mobilityId,
-            @RequestParam("parkingPhotoUri") String parkingPhotoUri,
-            @RequestParam("parkingPhotoKey") String parkingPhotoKey,
-            @RequestParam("file") MultipartFile file
+            @RequestBody HunterDto dto
     ) throws IOException {
-        HunterDto dto = new HunterDto(phoneNumber, mobilityId, parkingPhotoUri, parkingPhotoKey);
-        return userService.hunt(dto, file);
+        return userService.hunt(dto);
     }
 }
