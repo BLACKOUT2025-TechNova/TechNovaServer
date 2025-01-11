@@ -16,6 +16,7 @@ public class ParkedMobilities {
 
     @Id
     private long id;
+    private String gcooId;
     private MobilityType type;
     private Boolean needToBeHunted; // true 면 헌팅이 필요한 것! (= 잘못 놓여진 것)
     private String comment; // 한줄평
