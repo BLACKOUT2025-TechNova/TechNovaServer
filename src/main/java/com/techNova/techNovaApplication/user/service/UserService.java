@@ -1,6 +1,9 @@
 package com.techNova.techNovaApplication.user.service;
 
 import com.techNova.techNovaApplication.aws.service.S3Service;
+import com.techNova.techNovaApplication.parking.dto.GptEvaluateDto;
+import com.techNova.techNovaApplication.parking.dto.ScoreAndDetailDto;
+import com.techNova.techNovaApplication.parking.model.Evaluation;
 import com.techNova.techNovaApplication.parking.model.ParkedMobilities;
 import com.techNova.techNovaApplication.parking.repository.ParkedMobilityRepository;
 import com.techNova.techNovaApplication.user.dto.HunterDto;
@@ -19,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,7 +54,7 @@ public class UserService {
      * @return
      */
     @Transactional
-    public ResponseEntity<String> hunt(HunterDto dto, MultipartFile file) throws IOException {
+    public ResponseEntity<String> hunt(HunterDto dto ) throws IOException {
         Optional<UserEntity> userById = userRepository.findById(String.valueOf(dto.getPhoneNumber()));
         Optional<ParkedMobilities> mobById = mobilityRepository.findById(dto.getMobilityId());
 
@@ -60,7 +65,7 @@ public class UserService {
         // 모든 정보가 정상일 경우
         ParkedMobilities mobility = mobById.get();
         if (mobility.getNeedToBeHunted()) { // 해당 모빌리티가 헌팅 대상인 경우
-            modifyContent(mobility, userById.get(), dto, file);
+            modifyContent(mobility, userById.get(), dto);
             return ResponseEntity.ok("{\"message\": \"[헌팅 성공]\"}");
         }
         //헌팅 대상이 아닌 경우
@@ -70,9 +75,17 @@ public class UserService {
 
     }
 
-    private void modifyContent(ParkedMobilities mobility, UserEntity user, HunterDto dto, MultipartFile file) throws IOException {
-        mobility.getParkingStatus().setEvaluation("good"); // evaluation을 good으로 변경
+    private void modifyContent(ParkedMobilities mobility, UserEntity user, HunterDto dto) throws IOException {
+        List<GptEvaluateDto> gptList = dto.getEvaluation();
+        HashMap<String, ScoreAndDetailDto> map = new HashMap<>();
+        for (GptEvaluateDto gpt : gptList) {
+            map.put(gpt.getCategory(), new ScoreAndDetailDto(gpt.getScore(), gpt.getDetail()));
+        }
+        Evaluation evaluation = new Evaluation(map);
+        mobility.getParkingStatus().setEvaluation(evaluation); // evaluation을 good으로 변경
+
         mobility.setNeedToBeHunted(false); // 헌팅 대상에서 제외
+        mobility.setComment(dto.getComment()); // 코멘트 추가
         user.setReward(); // 리워드 지급
         try {
             mobility.setPhotoUri(new URI(dto.getParkingPhotoUri())); // 디비에 사진 정보 저장
@@ -80,10 +93,6 @@ public class UserService {
             throw new RuntimeException(e);
         }
         mobility.setPhotoKey(dto.getParkingPhotoKey());
-
-        // s3에 사진 저장
-        String bucketName = "blackout-20-bucket";
-        s3Service.uploadFile(bucketName, file.getOriginalFilename(), file.getInputStream(), file.getSize());
     }
 
     private boolean ifUserIsHunter(UserEntity user) {

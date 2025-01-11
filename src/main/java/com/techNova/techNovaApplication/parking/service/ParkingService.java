@@ -1,11 +1,11 @@
 package com.techNova.techNovaApplication.parking.service;
 
-import com.techNova.techNovaApplication.parking.dto.MessParkingDto;
-import com.techNova.techNovaApplication.parking.dto.MobilityDto;
-import com.techNova.techNovaApplication.parking.dto.ParkingRequestDto;
+import com.techNova.techNovaApplication.parking.dto.*;
+import com.techNova.techNovaApplication.parking.model.Evaluation;
 import com.techNova.techNovaApplication.parking.model.MobilityType;
 import com.techNova.techNovaApplication.parking.model.ParkedMobilities;
 import com.techNova.techNovaApplication.parking.model.ParkingStatus;
+import com.techNova.techNovaApplication.parking.repository.EvaluationRepo;
 import com.techNova.techNovaApplication.parking.repository.ParkedMobilityRepository;
 import com.techNova.techNovaApplication.parking.repository.ParkingStatusRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,15 +25,29 @@ import java.util.Optional;
 public class ParkingService {
     private final ParkedMobilityRepository mobilityRepository;
     private final ParkingStatusRepository statusRepository;
+    private final EvaluationRepo evaluationRepo;
 
     public ResponseEntity<String> park(ParkingRequestDto dto) throws URISyntaxException {
+
+        List<GptEvaluateDto> gptList = dto.getEvaluation();
+        HashMap<String, ScoreAndDetailDto> map = new HashMap<>();
+        int sum = 0;
+        for (GptEvaluateDto gpt : gptList) {
+            map.put(gpt.getCategory(), new ScoreAndDetailDto(gpt.getScore(), gpt.getDetail()));
+            sum += gpt.getScore();
+        }
+        Evaluation evaluation = new Evaluation(map);
+        evaluationRepo.save(evaluation);
+
         ParkingStatus status = new ParkingStatus(
-                dto.getId(), dto.getLatitude(), dto.getLongitude(), dto.getEvaluation());
+                dto.getId(), dto.getLatitude(), dto.getLongitude(), evaluation);
 
         ParkedMobilities mobility = ParkedMobilities.builder()
                 .id(dto.getId())
                 .type(dto.getType())
-                .needToBeHunted(clarifyNeedForHunting(dto))
+                .needToBeHunted(clarifyNeedForHunting(sum))
+                .comment(dto.getComment())
+                .sum(sum)
                 .photoUri(new URI(dto.getParkingPhotoUri()))
                 .photoKey(dto.getParkingPhotoKey())
                 .longitude(dto.getLongitude())
@@ -46,11 +61,8 @@ public class ParkingService {
         return ResponseEntity.ok("{\"message\": \"주차 성공\"}");
     }
 
-    private boolean clarifyNeedForHunting(ParkingRequestDto dto) {
-        if (dto.getEvaluation().equals("mess")) {
-            return true;
-        }
-        return false;
+    private boolean clarifyNeedForHunting(int score) {
+        return score <= 60;
     }
 
 

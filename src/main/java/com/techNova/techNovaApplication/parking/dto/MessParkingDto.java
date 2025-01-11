@@ -1,5 +1,6 @@
 package com.techNova.techNovaApplication.parking.dto;
 
+import com.techNova.techNovaApplication.parking.model.Evaluation;
 import com.techNova.techNovaApplication.parking.model.ParkedMobilities;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,15 +14,15 @@ public class MessParkingDto {
     private Long mobilityId;
     private float latitude;
     private float longitude;
-    private String evaluation;
+//    private Evaluation evaluation;
 
     public static List<MessParkingDto> toDtoList(List<ParkedMobilities> parkedMobilities) {
         return parkedMobilities.stream()
                 .map(mobility -> new MessParkingDto(
                         mobility.getId(),
                         mobility.getParkingStatus().getLatitude(),
-                        mobility.getParkingStatus().getLongitude(),
-                        mobility.getParkingStatus().getEvaluation()
+                        mobility.getParkingStatus().getLongitude()
+//                        mobility.getParkingStatus().getEvaluation()
                 ))
                 .collect(Collectors.toList());
     }

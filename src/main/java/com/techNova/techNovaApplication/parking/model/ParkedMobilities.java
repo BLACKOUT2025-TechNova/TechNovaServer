@@ -18,6 +18,8 @@ public class ParkedMobilities {
     private long id;
     private MobilityType type;
     private Boolean needToBeHunted; // true 면 헌팅이 필요한 것! (= 잘못 놓여진 것)
+    private String comment; // 한줄평
+    private int sum; // 점수 다 합친거
     private float latitude;
     private float longitude;
     private URI photoUri;
