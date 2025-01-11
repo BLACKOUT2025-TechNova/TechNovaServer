@@ -1,10 +1,12 @@
 package com.techNova.techNovaApplication.user.dto;
 
+import com.techNova.techNovaApplication.parking.dto.GptEvaluateDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -18,6 +20,7 @@ public class HunterDto {
     private Long mobilityId;
     private String parkingPhotoUri;
     private String parkingPhotoKey;
-
+    private String comment;
+    private List<GptEvaluateDto> evaluation;
 
 }
