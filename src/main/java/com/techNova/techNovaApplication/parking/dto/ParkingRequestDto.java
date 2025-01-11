@@ -11,5 +11,7 @@ public class ParkingRequestDto {
     // parking status 정보
     private float latitude;
     private float longitude;
+    private String parkingPhotoUri;
+    private String parkingPhotoKey;
     private String evaluation;
 }

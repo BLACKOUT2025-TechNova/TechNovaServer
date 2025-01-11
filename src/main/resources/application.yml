@@ -8,3 +8,8 @@ spring:
     database: postgresql
     hibernate:
       ddl-auto: update
+    open-in-view: false
+
+logging:
+  level:
+    org.hibernate: ERROR

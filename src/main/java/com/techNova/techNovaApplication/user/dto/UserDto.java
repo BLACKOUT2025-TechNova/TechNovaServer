@@ -7,11 +7,10 @@ import lombok.Getter;
 @Getter
 public class UserDto {
 
-    private String email;
-//    private String nickname;
+    private Long phoneNumber;
     private AccessMode accessMode;
 
     public UserEntity toEntity() {
-        return new UserEntity(email, accessMode, 0L);
+        return new UserEntity(phoneNumber, accessMode, 0L);
     }
 }

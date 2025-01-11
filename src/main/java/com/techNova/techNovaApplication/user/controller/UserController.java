@@ -5,9 +5,10 @@ import com.techNova.techNovaApplication.user.dto.UserDto;
 import com.techNova.techNovaApplication.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,8 +29,15 @@ public class UserController {
     /**
      * 지쿠 헌트 후 리워드 지급
      */
-    @PostMapping("/hunt")
-    public ResponseEntity<String> reward(@RequestBody HunterDto dto) {
-        return userService.hunt(dto);
+    @PostMapping(value = "/hunt", consumes = "multipart/form-data")
+    public ResponseEntity<String> reward(
+            @RequestParam("phoneNumber") Long phoneNumber,
+            @RequestParam("mobilityId") Long mobilityId,
+            @RequestParam("parkingPhotoUri") String parkingPhotoUri,
+            @RequestParam("parkingPhotoKey") String parkingPhotoKey,
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+        HunterDto dto = new HunterDto(phoneNumber, mobilityId, parkingPhotoUri, parkingPhotoKey);
+        return userService.hunt(dto, file);
     }
 }

@@ -13,8 +13,8 @@ import lombok.RequiredArgsConstructor;
 @Table(name = "gcoo_user")
 public class UserEntity {
     @Id
-    private String email;
-//    private String nickname;
+    private Long phoneNumber;  // 전화번호 전체
+    private String nickname; // 뒷자리 네글자
     private AccessMode accessMode;
     private Long reward;
 
@@ -28,8 +28,9 @@ public class UserEntity {
         this.reward = reward + REWARD_POINT;
     }
 
-    public UserEntity(String email, AccessMode accessMode, Long reward) {
-        this.email = email;
+    public UserEntity(Long phoneNumber, AccessMode accessMode, Long reward) {
+        this.phoneNumber = phoneNumber;
+        this.nickname = phoneNumber.toString().substring(phoneNumber.toString().length()-4);
         this.accessMode = accessMode;
         this.reward = reward;
     }
