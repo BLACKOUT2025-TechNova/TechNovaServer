@@ -4,14 +4,5 @@ spring:
     username: ${username}
     password: ${password}
     driver-class-name: org.postgresql.Driver
-#    hikari:
-#      connection-timeout: 30000
-#      maximum-pool-size: 10
-#      minimum-idle: 2
-#      connection-test-query: SELECT 1
-#
-#logging:
-#  level:
-#    org.hibernate: DEBUG
-#    com.zaxxer.hikari: DEBUG
-#    org.springframework: DEBUG
+    hikari:
+      maximumPoolSize: 10  # 원하는 최대 풀 크기로 설정
