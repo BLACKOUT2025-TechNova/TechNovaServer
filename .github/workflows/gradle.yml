@@ -63,7 +63,7 @@ jobs:
         mkdir -p ~/.ssh
         echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ssh -o StrictHostKeyChecking=no ubuntu@ec2-3-34-125-255.ap-northeast-2.compute.amazonaws.com << 'EOF'
+        ssh -o StrictHostKeyChecking=no ubuntu@ec2-44-208-166-189.compute-1.amazonaws.com << 'EOF'
           docker pull doorbreaker/myapp:latest
           docker stop myapp || true
           docker rm myapp || true
