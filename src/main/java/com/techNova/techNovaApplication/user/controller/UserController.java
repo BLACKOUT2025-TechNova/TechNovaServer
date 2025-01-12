@@ -31,7 +31,7 @@ public class UserController {
     /**
      * 지쿠 헌트 후 리워드 지급
      */
-    @PostMapping(value = "/hunt", consumes = "multipart/form-data")
+    @PostMapping("/hunt")
     public ResponseEntity<String> reward(
             @RequestBody HunterDto dto
     ) throws IOException {
