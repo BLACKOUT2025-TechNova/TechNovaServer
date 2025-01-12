@@ -4,6 +4,7 @@ import com.techNova.techNovaApplication.parking.dto.GptEvaluateDto;
 import com.techNova.techNovaApplication.parking.dto.ScoreAndDetailDto;
 import com.techNova.techNovaApplication.parking.model.Evaluation;
 import com.techNova.techNovaApplication.parking.model.ParkedMobilities;
+import com.techNova.techNovaApplication.parking.repository.EvaluationRepo;
 import com.techNova.techNovaApplication.parking.repository.ParkedMobilityRepository;
 import com.techNova.techNovaApplication.user.dto.HunterDto;
 import com.techNova.techNovaApplication.user.dto.UserDto;
@@ -31,6 +32,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ParkedMobilityRepository mobilityRepository;
+    private final EvaluationRepo evaluationRepo;
 
     @Transactional
     public ResponseEntity<String> login(UserDto dto) {
@@ -73,13 +75,15 @@ public class UserService {
 
     }
 
-    private void modifyContent(ParkedMobilities mobility, UserEntity user, HunterDto dto) throws IOException {
+    @Transactional
+    public void modifyContent(ParkedMobilities mobility, UserEntity user, HunterDto dto) throws IOException {
         List<GptEvaluateDto> gptList = dto.getEvaluation();
         HashMap<String, ScoreAndDetailDto> map = new HashMap<>();
         for (GptEvaluateDto gpt : gptList) {
             map.put(gpt.getCategory(), new ScoreAndDetailDto(gpt.getScore(), gpt.getDetail()));
         }
         Evaluation evaluation = new Evaluation(map);
+        evaluationRepo.save(evaluation);
         mobility.getParkingStatus().setEvaluation(evaluation); // evaluation을 변경
 
         mobility.setNeedToBeHunted(false); // 헌팅 대상에서 제외
